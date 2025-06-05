@@ -1,0 +1,25 @@
+---
+azurehosts:
+  hosts:
+    devopsvm:
+      ansible_host: az-devops
+
+#control:
+#  hosts:
+#    local-control:
+#      ansible_connection: local
+#    control-vm:
+#      ansible_host: control
+
+appservers:
+  hosts:
+    devopsvm-app:
+      ansible_host: az-devops
+      ansible_user: azureuser
+
+
+dbservers:
+  hosts:
+    devopsvm-db:
+      ansible_host: az-devops
+      ansible_user: azureuser

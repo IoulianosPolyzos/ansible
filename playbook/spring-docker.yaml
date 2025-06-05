@@ -1,0 +1,63 @@
+---
+- hosts: appservers
+  become: yes
+  tasks:
+
+    - name: Check if Docker is installed
+      shell: docker --version && docker compose version
+      register: docker_version_result
+      ignore_errors: true
+
+    - name: Set Docker installed fact
+      set_fact:
+        docker_installed: "{{ docker_version_result.rc == 0 }}"
+
+    - name: Install Docker if not present
+      include_tasks: docker.yaml
+      when: not docker_installed
+
+    - name: "Clone the Spring repository"
+      git:
+        repo: "https://github.com/IoulianosPolyzos/rentEstate.git"
+        dest: "{{ appdir }}"
+        version: "{{ branch }}"
+        force: yes
+
+    - name: "Populate application.properties"
+      lineinfile:
+        dest: "{{ appdir }}/src/main/resources/application.properties"
+        state: present
+        regexp: "^{{item.key}}="
+        line: "{{item.key}}={{item.value}}"
+      with_items:
+        - "{{app.env | dict2items}}"
+
+    - name: Tear down existing services
+      community.docker.docker_compose:
+        project_src: "{{ appdir }}"
+        state: absent
+        
+    - name: Remove existing spring_db_1 container if exists
+      community.docker.docker_container:
+        name: spring_db_1
+        state: absent
+        force_kill: yes
+
+    - name: Create and start services
+      docker_compose:
+        project_src: "{{ appdir }}"
+        build: true
+        state: present
+      register: output
+      notify: Restart Docker Compose
+
+    - debug:
+        var: output
+
+  handlers:
+    - name: Restart Docker Compose
+      community.docker.docker_compose:
+        project_src: "{{ appdir }}"
+        restarted: true
+
+
