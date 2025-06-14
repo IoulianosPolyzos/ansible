@@ -43,7 +43,7 @@
     - name: Create and start services
       community.docker.docker_compose_v2:
         project_src: "{{ appdir }}"
-        build: true
+        build: always
         state: present
       register: output
       notify: Restart Docker Compose
@@ -53,6 +53,6 @@
 
   handlers:
     - name: Restart Docker Compose
-      community.docker.docker_compose:
+      community.docker.docker_compose_v2:
         project_src: "{{ appdir }}"
         restarted: true
