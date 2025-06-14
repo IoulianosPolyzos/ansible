@@ -37,11 +37,12 @@
         project_src: "{{ appdir }}"
         state: absent
         
-    - name: Remove existing spring_db_1 container if exists
-      community.docker.docker_container:
-        name: spring_db_1
-        state: absent
-        force_kill: yes
+    - name: Stop spring systemd service if running
+      ansible.builtin.systemd:
+        name: spring.service
+        state: stopped
+        enabled: no
+      become: yes
 
     - name: Create and start services
       docker_compose:
