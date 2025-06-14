@@ -40,11 +40,13 @@
         remove_volumes: yes
         
 
-    - name: Create and start services
+    - name: Pull images, build and start services
       community.docker.docker_compose_v2:
         project_src: "{{ appdir }}"
         build: always
+        pull: always
         state: present
+        wait: true
       register: output
       notify: Restart Docker Compose
 
