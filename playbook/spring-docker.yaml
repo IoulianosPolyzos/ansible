@@ -33,7 +33,7 @@
         - "{{app.env | dict2items}}"
 
     - name: Tear down existing services
-      community.docker.docker_compose_v2:
+      community.docker.docker_compose:
         project_src: "{{ appdir }}"
         state: absent
         remove_orphans: yes
@@ -41,9 +41,9 @@
         
 
     - name: Create and start services
-      community.docker.docker_compose_v2:
+      docker_compose:
         project_src: "{{ appdir }}"
-        build: always
+        build: true
         state: present
       register: output
       notify: Restart Docker Compose
