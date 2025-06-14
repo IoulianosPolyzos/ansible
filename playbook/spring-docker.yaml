@@ -44,7 +44,7 @@
         name: spring_db_1
         state: absent
         force_kill: yes
-        ignore_errors: yes
+      ignore_errors: yes
         
         
 
