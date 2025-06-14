@@ -1,0 +1,36 @@
+
+PLAY [appservers] **************************************************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [devopsvm-app]
+
+TASK [Check if Docker is installed] ********************************************
+changed: [devopsvm-app]
+
+TASK [Set Docker installed fact] ***********************************************
+ok: [devopsvm-app]
+
+TASK [Install Docker if not present] *******************************************
+skipping: [devopsvm-app]
+
+TASK [Clone the Spring repository] *********************************************
+changed: [devopsvm-app]
+
+TASK [Populate application.properties] *****************************************
+ok: [devopsvm-app] => (item={'key': 'server.port', 'value': 8081})
+changed: [devopsvm-app] => (item={'key': 'spring.datasource.username', 'value': 'myuser'})
+changed: [devopsvm-app] => (item={'key': 'spring.datasource.password', 'value': 'pass12345'})
+changed: [devopsvm-app] => (item={'key': 'spring.datasource.url', 'value': 'jdbc:postgresql://135.225.105.38:5433/mydb'})
+
+TASK [Tear down existing services] *********************************************
+changed: [devopsvm-app]
+
+TASK [Create and start services] ***********************************************
+changed: [devopsvm-app]
+
+RUNNING HANDLER [Restart Docker Compose] ***************************************
+fatal: [devopsvm-app]: FAILED! => {"changed": false, "msg": "Unsupported parameters for (community.docker.docker_compose_v2) module: restarted. Supported parameters include: api_version, build, ca_path, check_files_existing, cli_context, client_cert, client_key, definition, dependencies, docker_cli, docker_host, env_files, files, profiles, project_name, project_src, pull, recreate, remove_images, remove_orphans, remove_volumes, scale, services, state, timeout, tls, tls_hostname, validate_certs, wait, wait_timeout (ca_cert, cacert_path, cert_path, docker_api_version, docker_url, key_path, tls_ca_cert, tls_client_cert, tls_client_key, tls_verify)."}
+
+PLAY RECAP *********************************************************************
+devopsvm-app               : ok=7    changed=5    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0   
+
