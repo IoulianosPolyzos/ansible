@@ -32,19 +32,24 @@
       with_items:
         - "{{app.env | dict2items}}"
 
-    - name: Tear down existing services with Compose
+    - name: Tear down existing services
       community.docker.docker_compose:
         project_src: "{{ appdir }}"
         state: absent
-        remove_volumes: true
+        
+    - name: Remove existing spring_db_1 container if exists
+      community.docker.docker_container:
+        name: spring_db_1
+        state: absent
+        force_kill: yes
 
-    - name: Bring up services with Compose
-      community.docker.docker_compose:
+    - name: Create and start services
+      docker_compose:
         project_src: "{{ appdir }}"
-        state: present
         build: true
-
+        state: present
       register: output
+      notify: Restart Docker Compose
 
     - debug:
         var: output
