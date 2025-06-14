@@ -36,17 +36,12 @@
       community.docker.docker_compose:
         project_src: "{{ appdir }}"
         state: absent
-        remove_orphans: yes
-        remove_volumes: yes
         
     - name: Remove existing spring_db_1 container if exists
       community.docker.docker_container:
         name: spring_db_1
         state: absent
         force_kill: yes
-      ignore_errors: yes
-        
-        
 
     - name: Create and start services
       docker_compose:
@@ -64,3 +59,5 @@
       community.docker.docker_compose:
         project_src: "{{ appdir }}"
         restarted: true
+
+
