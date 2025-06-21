@@ -21,8 +21,4 @@ ansible-playbook -i hosts.yaml postgres.yaml
 ansible-playbook -i hosts.yaml spring.yaml
 ```
 
-### Βήμα 3 (προαιρετικό): Εγκατάσταση nginx με απλό index
 
-```bash
-ansible-playbook -i hosts.yaml install_nginx.yaml
-```
