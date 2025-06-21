@@ -4,6 +4,7 @@
 
 
     tasks:
+      # Install the nginx package and ensure the package list is up-to-date
       - name: install ngninx package
         become: yes
         become_user: root
@@ -11,14 +12,19 @@
           name: nginx
           state: present
           update_cache: yes
+
+      # Copy a custom index.html file to the web root directory
       - name: copy index.html
         become: yes
         become_user: root
         copy:
           src: ../files/index.html
           dest: /var/www/html/index.html
-        notify: restart nginx service
+        notify: restart nginx service # Trigger handler if this task changes anything
+
+
     handlers:
+      # Restart nginx service when notified (e.g., after updating index.html)
       - name: restart nginx service
         service:
             name: nginx

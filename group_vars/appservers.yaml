@@ -1,9 +1,15 @@
+# Directory where the Spring Boot application will be cloned
 appdir: "{{ ansible_user_dir }}/spring"
+# Git branch to clone from the repository
 branch: "main"
+# Remote user ID and group ID - can be used for setting file ownership
 appuser: "{{ansible_user_id}}"
 appgroup: "{{ansible_user_gid}}"
+# Port on which the Spring Boot application will run
 app_port: 8081
+# Backend server URL (useful for frontend services or proxying)
 backend_server_url: "http://135.225.105.38:8081"
+# Application environment variables to be written to application.properties
 app:
   env:
     server.port: "{{app_port}}"

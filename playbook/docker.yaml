@@ -1,3 +1,4 @@
+    # Install required system packages to enable HTTPS access and repository management
     - name: Install basic packages
       apt:
         name: "{{item}}"
@@ -9,16 +10,19 @@
         - apt-transport-https
         - ca-certificates
 
+    # Download and add Docker's official GPG key
     - name: get key
       shell: "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -"
       #ignore_errors: yes
 
+    # Add the official Docker APT repository for Ubuntu
     - name: Add docker ppa
       apt_repository:
         repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
         state: present
         update_cache: yes
 
+    # Install Docker engine and Docker Compose from the official Docker repo
     - name: install docker
       apt:
         name: "{{item}}"
@@ -28,12 +32,15 @@
         - docker-ce
         - docker-compose
 
+
+    # Start the Docker service and ensure it starts on boot
     - name: start docker service
       service:
         name: docker
         state: started
         enabled: true
 
+    # Add the current user to the 'docker' group to allow running Docker without sudo
     - name: adding existing user to group docker
       user:
         name: "{{ ansible_user_id }}"

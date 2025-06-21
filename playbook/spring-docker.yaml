@@ -2,20 +2,25 @@
 - hosts: appservers
   become: yes
   tasks:
-
+    -
+    # Check if Docker and Docker Compose v2 are installed
     - name: Check if Docker is installed
       shell: docker --version && docker compose version
       register: docker_version_result
-      ignore_errors: true
+      ignore_errors: true # Allow the playbook to continue if Docker is missing
 
+
+    # Set a fact indicating whether Docker is installed
     - name: Set Docker installed fact
       set_fact:
         docker_installed: "{{ docker_version_result.rc == 0 }}"
 
+    # Include the Docker installation tasks if it's not installed
     - name: Install Docker if not present
       include_tasks: docker.yaml
       when: not docker_installed
 
+    # Clone the Spring Boot project from the specified GitHub repo
     - name: "Clone the Spring repository"
       git:
         repo: "https://github.com/IoulianosPolyzos/rentEstate.git"
@@ -23,6 +28,7 @@
         version: "{{ branch }}"
         force: yes
 
+    # Write environment-specific properties to the application's config file
     - name: "Populate application.properties"
       lineinfile:
         dest: "{{ appdir }}/src/main/resources/application.properties"
@@ -32,11 +38,14 @@
       with_items:
         - "{{app.env | dict2items}}"
 
+
+    # Stop and remove any previously running containers defined by the project
     - name: Tear down existing services
       community.docker.docker_compose_v2:
         project_src: "{{ appdir }}"
         state: absent
 
+    # Build and start the containers using Docker Compose
     - name: Create and start services
       community.docker.docker_compose_v2:
         project_src: "{{ appdir }}"
@@ -46,6 +55,7 @@
       notify: Restart Docker Compose
 
   handlers:
+    # Restart services if notified (e.g. after config or code changes)
     - name: Restart Docker Compose
       community.docker.docker_compose_v2:
         project_src: "{{ appdir }}"

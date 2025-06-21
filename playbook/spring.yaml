@@ -2,6 +2,7 @@
 - hosts: appservers
 
   pre_tasks:
+    # Install Java (required to build and run the Spring Boot app)
     - name: Install Java
       apt:
           name: openjdk-21-jdk
@@ -10,10 +11,12 @@
       become: yes
 
   tasks:
+    # Print the user directory path for debugging purposes
       - name: "debug appdir"
         ansible.builtin.debug:
           msg: "appdir {{ansible_user_dir}}"
 
+    # Clone the Spring Boot project from GitHub into the specified directory
       - name: "Clone the Spring repository"
         git:
             repo: "https://github.com/IoulianosPolyzos/rentEstate.git"
@@ -21,6 +24,7 @@
             version: "{{ branch }}"
             force: yes
 
+    # Populate application.properties file using variables from app.env
       - name: "Populate application.properties"
         lineinfile:
           dest: "{{ appdir }}/src/main/resources/application.properties"
@@ -30,15 +34,17 @@
         with_items:
           - "{{app.env | dict2items}}"
 
+    # Ensure the Maven wrapper script is executable
       - name: Ensure mvnw is executable
         file:
           path: "{{ appdir }}/mvnw"
           mode: '0755'
 
+    # Attempt to build the Spring Boot application using the Maven wrapper
       - name: "Build spring project"
         block:
 
-        - name: "Build the Spring application"
+        - name: "Build the Spring application"         # First build attempt
           command: "./mvnw package -Dmaven.test.skip "
           args:
               chdir: "{{ appdir }}"
@@ -49,7 +55,7 @@
   #            chdir: "{{ appdir }}"
 
         rescue:
-
+          # If build fails, retrieve the correct Maven checksum file
         - name: Fetch the SHA-512 checksum for Maven 3.9.9
           get_url:
             url: https://downloads.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.zip.sha512
@@ -57,16 +63,19 @@
             validate_certs: yes
             force: yes
 
+          # Read the SHA-512 hash from the downloaded file
         - name: Read the SHA-512 checksum from the file
           command: cat /tmp/maven_sha512.txt
           register: sha512_checksum
 
+          # Update the Maven wrapper properties with the correct checksum
         - name: Replace the distributionSha512Sum line in maven-wrapper.properties
           replace:
             path: "{{ appdir }}/.mvn/wrapper/maven-wrapper.properties"
             regexp: '^distributionSha'
             replace: "distributionSha512Sum={{ sha512_checksum.stdout }}"
-        
+
+          # Clean up temporary checksum file
         - name: Clean up the temporary file
           file:
             path: /tmp/maven_sha512.txt
@@ -74,12 +83,13 @@
           when: sha512_checksum is defined
         
         always:
+          # Always reattempt the build (in case it succeeded after fixing the checksum)
           - name: "Build the Spring application"
             command: "./mvnw package -Dmaven.test.skip "
             args:
                 chdir: "{{ appdir }}"
 
-
+    # Copy the systemd unit file for the Spring Boot app
       - name: copy spring service file
         template:
           src: ../files/spring.service.j2
@@ -88,12 +98,15 @@
         become_user: root
         notify: restart spring
 
+    # Reload the Spring service to apply any changes
       - name: reload spring service
         service:
           name: spring
           state: restarted
         become: yes
 
+
+    # Ensure the Spring service is enabled and running
       - name: ensure spring service started
         service:
           name: spring
@@ -101,18 +114,21 @@
           enabled: yes
         become: yes
 
+    # Install Nginx to act as a reverse proxy
       - name: "APT - install nginx"
         apt:
           name: nginx
           update_cache: yes
         become: yes
 
+    # Copy the Nginx configuration for the Spring app
       - name: copy nginx conf file
         template:
           src: ../files/nginx.http.j2
           dest: "/etc/nginx/sites-available/spring"
         become: yes
 
+    # Enable the Spring site by linking it to sites-enabled
       - name: enable spring site in nginx
         file:
           src: "/etc/nginx/sites-available/spring"
@@ -121,6 +137,7 @@
         become: yes
         notify: restart nginx
 
+    # Disable the default Nginx site
       - name: de-activate default nginx site
         file:
           path: /etc/nginx/sites-enabled/default
@@ -129,12 +146,14 @@
         notify: restart nginx
 
   handlers:
+    # Restart Spring service if the systemd unit file changes
   - name: restart spring
     service:
       name: spring
       state: restarted
     become: yes
 
+    # Restart Nginx to apply configuration changes
   - name: restart nginx
     service:
       name: nginx

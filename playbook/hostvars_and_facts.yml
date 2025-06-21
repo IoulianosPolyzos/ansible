@@ -3,11 +3,12 @@
   hosts: all
 
   tasks:
-
+    # Print all host variables available to Ansible for this inventory
     - name: print hostvars
       debug:
         msg: "hostvars is {{hostvars}}"
 
+    # Display all collected system facts (hardware, OS, network, etc.)
     - name: Show facts available on the system
       ansible.builtin.debug:
         var: ansible_facts
