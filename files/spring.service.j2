@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 User={{appuser}}
+EnvironmentFile=/home/azureuser/.envfile
 Group={{appgroup}}
 WorkingDirectory={{service.workingdir}}
 ExecStart={{service.execstart}}
