@@ -12,7 +12,7 @@
 
   tasks:
     # Print the user directory path for debugging purposes
-      - name: "debug appdirrrrrrrrr"
+      - name: "debug appdir"
         ansible.builtin.debug:
           msg: "appdir {{ansible_user_dir}}"
 
