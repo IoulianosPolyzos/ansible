@@ -64,6 +64,7 @@
         state: present
       register: output
       notify: Restart Docker Compose
+      become: no
 
   handlers:
     # Restart services if notified (e.g. after config or code changes)
