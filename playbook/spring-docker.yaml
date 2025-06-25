@@ -42,29 +42,10 @@
       copy:
         src: /home/azureuser/.envfile
         dest: /root/spring/.envfile
-        remote_src: yes
         owner: azureuser
         group: azureuser
         mode: '0600'
       become: yes
-
-    - name: Check if .envfile exists
-      ansible.builtin.stat:
-        path: /root/spring/.envfile
-      register: envfile_stat
-
-    - name: Show .envfile existence
-      debug:
-        var: envfile_stat
-        
-    - name: List files in /root/spring
-      ansible.builtin.command:
-        cmd: ls -l /root/spring/
-      register: ls_output
-
-    - name: Show ls output
-      debug:
-        var: ls_output.stdout_lines
 
     # Stop and remove any previously running containers defined by the project
     - name: Tear down existing services
