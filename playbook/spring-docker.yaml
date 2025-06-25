@@ -48,11 +48,13 @@
     - name: Copy .env file to VM
       copy:
         src: /home/azureuser/.envfile
-        dest: "{{ appdir }}"/.envfile
+        dest: "{{ appdir }}/.envfile"
         remote_src: yes
         owner: azureuser
         group: azureuser
         mode: '0600'
+      become: yes
+      become_user: root
 
     # Build and start the containers using Docker Compose
     - name: Create and start services
