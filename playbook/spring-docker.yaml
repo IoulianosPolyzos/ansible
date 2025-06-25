@@ -44,7 +44,6 @@
       community.docker.docker_compose_v2:
         project_src: "{{ appdir }}"
         state: absent
-      become: no
 
     - name: Copy .env file to VM
       copy:
@@ -54,7 +53,7 @@
         owner: azureuser
         group: azureuser
         mode: '0600'
-      become: no
+      become: yes
 
     # Build and start the containers using Docker Compose
     - name: Create and start services
@@ -64,7 +63,7 @@
         state: present
       register: output
       notify: Restart Docker Compose
-      become: no
+
 
   handlers:
     # Restart services if notified (e.g. after config or code changes)
