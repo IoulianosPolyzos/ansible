@@ -38,7 +38,7 @@
       with_items:
         - "{{app.env | dict2items}}"
 
-    - name: Copy .env file to VM
+    - name: "Copy .env file to VM"
       copy:
         src: /home/azureuser/.envfile
         dest: "{{ appdir }}/.envfile"
@@ -46,8 +46,8 @@
         group: root
         mode: '0600'
       become: yes
-      
-    - name: Check .envfile existence on remote host
+
+    - name: "Check .envfile existence on remote host"
       stat:
         path: "{{ appdir }}/.envfile"
       register: envfile_stat
