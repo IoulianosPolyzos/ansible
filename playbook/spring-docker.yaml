@@ -45,6 +45,15 @@
         project_src: "{{ appdir }}"
         state: absent
 
+    - name: Copy .env file to VM
+      copy:
+        src: /home/azureuser/.envfile
+        dest: /home/azureuser/spring/.env
+        remote_src: yes
+        owner: azureuser
+        group: azureuser
+        mode: '0600'
+
     # Build and start the containers using Docker Compose
     - name: Create and start services
       community.docker.docker_compose_v2:
