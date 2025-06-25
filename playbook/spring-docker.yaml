@@ -48,7 +48,7 @@
     - name: Copy .env file to VM
       copy:
         src: /home/azureuser/.envfile
-        dest: /home/azureuser/spring/.env
+        dest: /home/azureuser/spring/.envfile
         remote_src: yes
         owner: azureuser
         group: azureuser
