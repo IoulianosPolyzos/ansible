@@ -67,7 +67,7 @@
         var: envfile_stat
 
     # Stop and remove any previously running containers defined by the project
-    - name: Tear down existing services
+    - name: Tear down existing servicesssssssss
       community.docker.docker_compose_v2:
         project_src: "{{ appdir }}"
         state: absent

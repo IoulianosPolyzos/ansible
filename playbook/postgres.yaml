@@ -75,7 +75,7 @@
 
       always:
         # Ensure user creation is retried regardless of previous failure
-        - name: create postgres userrrrrrrrr
+        - name: create postgres user
           postgresql_user:
             name: myuser
             password: 'pass12345'
