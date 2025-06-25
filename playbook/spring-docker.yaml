@@ -49,25 +49,12 @@
       with_items:
         - "{{app.env | dict2items}}"
 
-    - name: "Copy .env file to VM"
-      copy:
-        src: /home/azureuser/.envfile
-        dest: "{{ appdir }}/.envfile"
-        owner: root
-        group: root
-        mode: '0600'
+    - name: "Copy existing .envfile to appdir"
+      shell: cp /home/azureuser/.envfile {{ appdir }}/.envfile
       become: yes
 
-    - name: "Check .envfile existence on remote host"
-      stat:
-        path: "{{ appdir }}/.envfile"
-      register: envfile_stat
-
-    - debug:
-        var: envfile_stat
-
     # Stop and remove any previously running containers defined by the project
-    - name: Tear down existing servicesssssssss
+    - name: Tear down existing services
       community.docker.docker_compose_v2:
         project_src: "{{ appdir }}"
         state: absent
