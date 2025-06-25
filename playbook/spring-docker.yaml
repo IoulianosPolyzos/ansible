@@ -28,19 +28,8 @@
         version: "{{ branch }}"
         force: yes
 
-    - name: Debug appdir
-      debug:
-        var: appdir
-
-    - name: Debug current directory listing
-      shell: ls -la {{ appdir }}
-      register: ls_output
-
-    - debug:
-        var: ls_output.stdout_lines
-
     # Write environment-specific properties to the application's config file
-    - name: "Populate application.propertiessss"
+    - name: "Populate application.properties"
       lineinfile:
         dest: "{{ appdir }}/src/main/resources/application.properties"
         state: present
