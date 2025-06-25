@@ -29,7 +29,7 @@
         force: yes
 
     # Write environment-specific properties to the application's config file
-    - name: "Populate application.properties"
+    - name: "Populate application.propertiessss"
       lineinfile:
         dest: "{{ appdir }}/src/main/resources/application.properties"
         state: present
@@ -56,7 +56,7 @@
         var: envfile_stat
 
     # Stop and remove any previously running containers defined by the project
-    - name: Tear down existing servicess
+    - name: Tear down existing services
       community.docker.docker_compose_v2:
         project_src: "{{ appdir }}"
         state: absent
