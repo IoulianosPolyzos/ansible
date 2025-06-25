@@ -41,11 +41,19 @@
     - name: Copy .env file to VM
       copy:
         src: /home/azureuser/.envfile
-        dest: /root/spring/.envfile
-        owner: azureuser
-        group: azureuser
+        dest: "{{ appdir }}/.envfile"
+        owner: root
+        group: root
         mode: '0600'
       become: yes
+      
+    - name: Check .envfile existence on remote host
+      stat:
+        path: "{{ appdir }}/.envfile"
+      register: envfile_stat
+
+    - debug:
+        var: envfile_stat
 
     # Stop and remove any previously running containers defined by the project
     - name: Tear down existing services
