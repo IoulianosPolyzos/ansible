@@ -54,6 +54,19 @@
       register: output
       notify: Restart Docker Compose
 
+   # Restart container to take env file for mail password
+    - name: Restart container with env file
+      docker_container:
+        name: spring-spring-1
+        image: your-spring-image
+        state: started
+        restart_policy: always
+        env_file: /home/azureuser/spring/.env
+        ports:
+          - "8081:8081"
+        volumes:
+          - /home/azureuser/spring:/app
+
   handlers:
     # Restart services if notified (e.g. after config or code changes)
     - name: Restart Docker Compose
