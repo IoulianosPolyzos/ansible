@@ -21,4 +21,9 @@ ansible-playbook -i hosts.yaml postgres.yaml
 ansible-playbook -i hosts.yaml spring.yaml
 ```
 
+## 3. Εκτέλεση Playbook για Docker
+
+```bash
+ansible-playbook -i hosts.yaml spring-docker.yaml
+```
 
