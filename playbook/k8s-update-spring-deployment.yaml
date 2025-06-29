@@ -7,8 +7,17 @@
     deployment_name: spring-deployment
     container_name: spring
     new_image: "ghcr.io/ioulianospolyzos/devops-spring:latest"
+    hosts_yaml_path: "/var/lib/jenkins/workspace/k8s-job/hosts.yaml"
 
   tasks:
+    - name: Replace az-devops with az-devops2 in hosts.yaml on remote host
+      replace:
+        path: "{{ hosts_yaml_path }}"
+        regexp: 'az-devops'
+        replace: 'az-devops2'
+      delegate_to: az-devops2
+      become: yes
+
     - name: Update the deployment image
       kubernetes.core.k8s:
         state: present
